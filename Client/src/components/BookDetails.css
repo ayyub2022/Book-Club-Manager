@@ -1,0 +1,23 @@
+.book-details-container {
+    padding: 20px;
+  }
+  
+  .book-details {
+    display: flex;
+    align-items: flex-start;
+  }
+  
+  .book-image {
+    width: 150px;
+    height: auto;
+    margin-right: 20px;
+  }
+  
+  .book-info {
+    max-width: 600px;
+  }
+  
+  .book-info p {
+    margin: 10px 0;
+  }
+  

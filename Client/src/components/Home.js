@@ -37,9 +37,9 @@ const books = [
 
 function Home() {
   return (
-    <div className="container">
+    <div className="home-container">
       <h2>Books</h2>
-      <div className="book-list">
+      <div className="home-book-list">
         {books.map(book => (
           <BookCard key={book.id} book={book} />
         ))}
