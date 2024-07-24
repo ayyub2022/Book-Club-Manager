@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import './BookDetails.css';
 
+// Sample books data
 const sampleBooks = [
   { id: 1, title: 'To Kill a Mockingbird', author: 'Harper Lee', genre: 'Fiction', description: 'A novel about racial injustice in the Deep South.', image: '/images/to-kill-a-mockingbird.jpg', rating: 4.8, popularity: 90 },
   { id: 2, title: '1984', author: 'George Orwell', genre: 'Dystopian', description: 'A totalitarian regime uses surveillance to control its citizens.', image: '/images/1984.jpg', rating: 4.6, popularity: 85 },
@@ -58,6 +59,8 @@ const sampleBooks = [
 function BookDetails() {
   const { id } = useParams();
   const [book, setBook] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredBooks, setFilteredBooks] = useState([]);
 
   useEffect(() => {
     // Simulate fetching book details
@@ -65,10 +68,28 @@ function BookDetails() {
     setBook(foundBook);
   }, [id]);
 
+  useEffect(() => {
+    // Filter books based on search query
+    const results = sampleBooks.filter(b =>
+      b.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      b.author.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    setFilteredBooks(results);
+  }, [searchQuery]);
+
   if (!book) return <div>Loading...</div>;
 
   return (
     <div className="book-details-container">
+      <div className="search-bar">
+        <input
+          type="text"
+          placeholder="Search by title or author..."
+          value={searchQuery}
+          onChange={e => setSearchQuery(e.target.value)}
+        />
+      </div>
+      
       <div className="book-main-details">
         <img src={book.image} alt={book.title} className="book-main-image" />
         <div className="book-info">
@@ -84,17 +105,21 @@ function BookDetails() {
       <div className="other-books">
         <h3>Other Books</h3>
         <div className="other-books-list">
-          {sampleBooks.filter(b => b.id !== book.id).map(otherBook => (
-            <div key={otherBook.id} className="book-card">
-              <Link to={`/books/${otherBook.id}`}>
-                <img src={otherBook.image} alt={otherBook.title} className="book-thumbnail" />
-                <div className="book-card-info">
-                  <h4>{otherBook.title}</h4>
-                  <p>{otherBook.author}</p>
-                </div>
-              </Link>
-            </div>
-          ))}
+          {filteredBooks.length === 0 ? (
+            <p>No books found</p>
+          ) : (
+            filteredBooks.filter(b => b.id !== book.id).map(otherBook => (
+              <div key={otherBook.id} className="book-card">
+                <Link to={`/books/${otherBook.id}`}>
+                  <img src={otherBook.image} alt={otherBook.title} className="book-thumbnail" />
+                  <div className="book-card-info">
+                    <h4>{otherBook.title}</h4>
+                    <p>{otherBook.author}</p>
+                  </div>
+                </Link>
+              </div>
+            ))
+          )}
         </div>
       </div>
     </div>

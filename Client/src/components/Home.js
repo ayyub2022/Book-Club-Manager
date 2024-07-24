@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import BookCard from './BookCard'; // Import the BookCard component
 import './Home.css'; // Ensure you have this CSS file for general styling
 
@@ -36,12 +36,39 @@ const books = [
 ];
 
 function Home() {
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const filteredBooks = books.filter(book =>
+    book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    book.author.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    book.description.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
-    <div className="home-container">
+    <div className="home-container" style={{ padding: '20px' }}>
       <h2>Books</h2>
-      <div className="home-book-list">
-        {books.map(book => (
-          <BookCard key={book.id} book={book} />
+      <input
+        type="text"
+        placeholder="Search for books..."
+        className="search-bar"
+        style={{
+          width: '100%',
+          padding: '10px',
+          marginBottom: '20px',
+          border: '1px solid #ddd',
+          borderRadius: '4px',
+          fontSize: '1rem',
+        }}
+        value={searchTerm}
+        onChange={e => setSearchTerm(e.target.value)}
+      />
+      <div className="home-book-list" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '20px' }}>
+        {filteredBooks.map(book => (
+          <div className="home-book-card" style={{ border: '1px solid #ddd', borderRadius: '8px', padding: '15px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', display: 'flex', flexDirection: 'column', alignItems: 'center' }} key={book.id}>
+            <img src={book.image} alt={book.title} style={{ width: '100%', height: 'auto', borderRadius: '4px' }} />
+            <h3 style={{ marginTop: '10px', fontSize: '1.2rem', textAlign: 'center' }}>{book.title}</h3>
+            <p style={{ fontSize: '1rem', color: '#555', textAlign: 'center' }}>{book.description}</p>
+          </div>
         ))}
       </div>
     </div>
@@ -49,3 +76,5 @@ function Home() {
 }
 
 export default Home;
+
+

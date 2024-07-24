@@ -4,6 +4,18 @@
     padding: 20px;
   }
   
+  .search-bar {
+    margin-bottom: 20px;
+  }
+  
+  .search-bar input {
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+  
   .book-main-details {
     display: flex;
     margin-bottom: 20px;
