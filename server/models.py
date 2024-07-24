@@ -4,12 +4,12 @@ db = SQLAlchemy()
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(255), unique=True, nullable=False)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password = db.Column(db.String(200), nullable=False)
     reviews = db.relationship('Review', backref='user', lazy=True)
-    favorites = db.relationship('Book', secondary='user_book', backref='users')
-
-    def __repr__(self):
-        return f'<User {self.username}>'
+    favorite_books = db.relationship('Book', secondary='user_book', lazy='subquery',
+        backref=db.backref('favorited_by', lazy=True))
 
 class Book(db.Model):
     id = db.Column(db.Integer, primary_key=True)
