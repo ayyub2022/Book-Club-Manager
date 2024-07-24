@@ -4,9 +4,9 @@ import Navbar from './components/Navbar';
 import Register from './components/Register';
 import Login from './components/Login';
 import Dashboard from './components/Dashboard';
-import Home from './components/Home';
-import BookDetails from './components/BookDetails';
-import UserProfile from './components/UserProfile';
+import Home from './components/Home'; // Import the Home component
+import BookDetails from './components/BookDetails'; // Assuming you have a BookDetails component
+import UserProfile from './components/UserProfile'; // Assuming you have a UserProfile component
 
 function App() {
   return (
@@ -18,7 +18,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/books/:id" element={<BookDetails />} />
+          <Route path="/books/:bookId" element={<BookDetails />} />
           <Route path="/profile" element={<UserProfile />} />
         </Routes>
       </div>
