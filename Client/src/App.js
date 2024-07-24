@@ -4,6 +4,9 @@ import Navbar from './components/Navbar';
 import Register from './components/Register';
 import Login from './components/Login';
 import Dashboard from './components/Dashboard';
+import Home from './components/Home';
+import BookDetails from './components/BookDetails';
+import UserProfile from './components/UserProfile';
 
 function App() {
   return (
@@ -11,9 +14,12 @@ function App() {
       <div className="App">
         <Navbar />
         <Routes>
+          <Route path="/" element={<Home />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/books/:id" element={<BookDetails />} />
+          <Route path="/profile" element={<UserProfile />} />
         </Routes>
       </div>
     </Router>
@@ -21,3 +27,4 @@ function App() {
 }
 
 export default App;
+
