@@ -11,6 +11,39 @@
   font-size: 1rem;
 }
 
+.featured-books-slider {
+  display: flex;
+  overflow-x: scroll;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.featured-book-card {
+  flex: 0 0 auto;
+  width: 150px; /* Adjust as needed */
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.featured-book-card img {
+  width: 100%;
+  height: auto;
+  border-radius: 4px;
+}
+
+.featured-book-card h4 {
+  margin-top: 10px;
+  font-size: 1rem;
+}
+
+.featured-book-card p {
+  font-size: 0.9rem;
+  color: #555;
+}
+
 .home-book-list {
   display: grid;
   grid-template-columns: repeat(2, 1fr); /* Two columns */
