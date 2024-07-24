@@ -5,8 +5,10 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy import func
 import re
 from flask import url_for
+from flask_sqlalchemy import SQLAlchemy
+import bcrypt
 
-from extensions import db, bcrypt
+db = SQLAlchemy()
 
 class User(db.Model, SerializerMixin):
     __tablename__ = 'users'

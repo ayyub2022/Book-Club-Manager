@@ -111,5 +111,55 @@ class Review(Resource):
 api.add_resource(Review, '/review', '/review/<int:id>')
 
 
+class User(Resource):
+    def get(self, id=None):
+        if id is None:
+            users = [user.to_dict() for user in User.query.all()]
+            return jsonify(users), 200
+        else:
+            user = User.query.get_or_404(id)
+            return jsonify(user.to_dict()), 200
+
+    def post(self):
+        data = request.get_json()
+        if not data:
+            return {"message": "No input data provided"}, 400
+        
+        new_user = User(
+            username=data['username'],
+            email=data['email'],
+            _password=data['_password']
+        )
+        db.session.add(new_user)
+        db.session.commit()
+        return jsonify(new_user.to_dict()), 201
+    
+api.add_resource(User, '/user', '/user/<int:id>')
+
+
+class UserBook(Resource):
+    def get(self, id=None):
+        if id is None:
+            user_books = [user_book.to_dict() for user_book in UserBook.query.all()]
+            return jsonify(user_books), 200
+        else:
+            user_book = UserBook.query.get_or_404(id)
+            return jsonify(user_book.to_dict()), 200
+
+    def post(self):
+        data = request.get_json()
+        if not data:
+            return {"message": "No input data provided"}, 400
+        
+        new_user_book = UserBook(
+            user_id=data['user_id'],
+            book_id=data['book_id']
+        )
+        db.session.add(new_user_book)
+        db.session.commit()
+        return jsonify(new_user_book.to_dict()), 201
+
+
+
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
