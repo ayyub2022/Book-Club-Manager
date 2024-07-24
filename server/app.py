@@ -59,9 +59,57 @@ class Book(Resource):
         book = Book.query.get_or_404(id)
         db.session.delete(book)
         db.session.commit()
-        return {"message": "book deleted"}, 204
+        return {"message": "Book deleted"}, 204
     
 api.add_resource(Book, '/book', '/book/<int:id>')
+
+
+class Review(Resource):
+    def get(self, id=None):
+        if id is None:
+            reviews = [review.to_dict() for review in Review.query.all()]
+            return jsonify(reviews), 200
+        else:
+            review = Review.query.get_or_404(id)
+            return jsonify(review.to_dict()), 200
+
+    def post(self):
+        data = request.get_json()
+        if not data:
+            return {"message": "No input data provided"}, 400
+        
+        new_review = Review(
+            content=data['content'],
+            rating=data['rating'],
+            book_id=data['book_id'],
+            user_id=data['user_id']
+        )
+        db.session.add(new_review)
+        db.session.commit()
+        return jsonify(new_review.to_dict()), 201
+
+    def put(self, id=None):
+        review = Review.query.get_or_404(id)
+        data = request.get_json()
+        if not data:
+            return {"message": "No input data provided"}, 400
+
+        review.content = data.get('content', review.content)
+        review.rating = data.get('rating', review.rating)
+        review.book_id = data.get('book_id', review.book_id)
+        review.user_id = data.get('user_id', review.user_id)
+    
+        db.session.commit()
+        return jsonify(review.to_dict()), 200
+
+    def delete(self, id=None):
+        review = Review.query.get_or_404(id)
+        db.session.delete(review)
+        db.session.commit()
+        return {"message": "Review deleted"}, 204
+    
+api.add_resource(Review, '/review', '/review/<int:id>')
+
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)

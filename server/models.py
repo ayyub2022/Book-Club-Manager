@@ -1,38 +1,109 @@
-from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy_serializer import SerializerMixin
+from sqlalchemy.ext.associationproxy import association_proxy
+from sqlalchemy.orm import validates
+from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy import func
+import re
+from flask import url_for
 
-db = SQLAlchemy()
+from extensions import db, bcrypt
 
-class User(db.Model):
+class User(db.Model, SerializerMixin):
+    __tablename__ = 'users'
+
+    serialize_rules = ('-reviews.user', '-favorite_books.favorited_by')
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(200), nullable=False)
-    reviews = db.relationship('Review', backref='user', lazy=True)
-    favorite_books = db.relationship('Book', secondary='user_book', lazy='subquery',
-        backref=db.backref('favorited_by', lazy=True))
+    username = db.Column(db.String, unique=True, nullable=False)
+    email = db.Column(db.String, unique=True, nullable=False)
+    _password = db.Column(db.String, nullable=False)
 
-class Book(db.Model):
+    reviews = db.relationship('Review', back_populates='user')
+    favorite_books = association_proxy('user_books', 'book')
+    
+    @validates('username')
+    def validate_username(self, key, username):
+        user = User.query.filter_by(username=username).first()
+        if user:
+            raise ValueError('Username already exists')
+        return username
+
+    @hybrid_property
+    def password(self):
+        return self._password
+
+    @password.setter
+    def password(self, password):
+        if (
+            len(password) < 8 or
+            not re.search(r"[A-Z]", password) or
+            not re.search(r"[a-z]", password) or
+            not re.search(r"[0-9]", password) or
+            not re.search(r"[\W_]", password)
+        ):
+            raise ValueError(
+                'Password MUST be at least 8 characters, include uppercase, lowercase, numbers, and special characters.'
+            )
+
+        password_hash = bcrypt.generate_password_hash(password.encode('utf-8'))
+        self._password = password_hash.decode('utf-8')
+
+    def authenticate(self, password):
+        return bcrypt.check_password_hash(self._password, password.encode('utf-8'))
+
+    @validates('email')
+    def validate_email(self, key, email):
+        if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
+            raise ValueError('Invalid email address')
+        existing_email = User.query.filter_by(email=email).first()
+        if existing_email:
+            raise ValueError('Email already exists')
+        return email
+
+
+class Book(db.Model, SerializerMixin):
+    __tablename__ = 'books'
+
+    serialize_rules = ('-reviews.book', '-favorited_by.books')
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(255), nullable=False)
-    author = db.Column(db.String(255), nullable=False)
+    title = db.Column(db.String, nullable=False)
+    author = db.Column(db.String, nullable=False)
+    genre = db.Column(db.String, nullable=False)
+    published_date = db.Column(db.Date, nullable=False)
 
-    def __repr__(self):
-        return f'<Book {self.title}>'
+    reviews = db.relationship('Review', back_populates='book')
+    favorited_by = association_proxy('user_books', 'user')
 
-class Review(db.Model):
+class Review(db.Model, SerializerMixin):
+    __tablename__ = 'reviews'
+
+    serialize_rules = ('-user.reviews', '-book.reviews')
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text, nullable=False)
     rating = db.Column(db.Integer, nullable=False)
-    book_id = db.Column(db.Integer, db.ForeignKey('book.id'), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    book_id = db.Column(db.Integer, db.ForeignKey('books.id'), nullable=False)
 
-    def __repr__(self):
-        return f'<Review {self.id}>'
+    user = db.relationship('User', back_populates='reviews')
+    book = db.relationship('Book', back_populates='reviews')
 
-class UserBook(db.Model):
-    __tablename__ = 'user_book'
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
-    book_id = db.Column(db.Integer, db.ForeignKey('book.id'), primary_key=True)
+    @validates('content')
+    def validate_content(self, key, content):
+        if len(content) < 5:
+            raise ValueError('Content must be at least 5 characters long')
+        return content
 
-    def __repr__(self):
-        return f'<UserBook user_id={self.user_id} book_id={self.book_id}>'
+    @validates('rating')
+    def validate_rating(self, key, rating):
+        if not (1 <= int(rating) <= 5):
+            raise ValueError('Rating must be between 1 and 5')
+        return rating
+
+class UserBook(db.Model, SerializerMixin):
+    __tablename__ = 'user_books'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    book_id = db.Column(db.Integer, db.ForeignKey('books.id'), nullable=False)
+
+    user = db.relationship(User, backref='user_books')
+    book = db.relationship(Book, backref='user_books')    
