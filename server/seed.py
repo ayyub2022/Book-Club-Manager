@@ -1,83 +1,74 @@
-from extensions import db, bcrypt
+from app import app, db
 from models import User, Book, Review, UserBook
-from datetime import date
+from faker import Faker
+from datetime import datetime
 
-# Drop all tables and recreate them
-db.drop_all()
-db.create_all()
+fake = Faker()
 
-# Create some users
-user1 = User(
-    username='johndave',
-    email='johndave@example.com',
-    password='Password123!'
-)
-user2 = User(
-    username='janemike',
-    email='janemike@example.com',
-    password='SecurePass456!'
-)
+# Function to create the Flask app
+if __name__ == "__main__":
+    with app.app_context():
+        print("Starting seed...")
 
-# Create some books
-book1 = Book(
-    title='The Great Gatsby',
-    author='F. Scott Fitzgerald',
-    genre='Classic',
-    published_date=date(1925, 4, 10)
-)
-book2 = Book(
-    title='To Kill a Mockingbird',
-    author='Harper Lee',
-    genre='Classic',
-    published_date=date(1960, 7, 11)
-)
-book3 = Book(
-    title='1984',
-    author='George Orwell',
-    genre='Dystopian',
-    published_date=date(1949, 6, 8)
-)
+        # Ensure all tables are created (if not already created)
+        db.drop_all()
+        db.create_all()
 
-# Create some reviews
-review1 = Review(
-    content='A fascinating glimpse into the American Dream.',
-    rating=5,
-    user=user1,
-    book=book1
-)
-review2 = Review(
-    content='A gripping tale of racial injustice.',
-    rating=4,
-    user=user2,
-    book=book2
-)
-review3 = Review(
-    content='A chilling depiction of a dystopian future.',
-    rating=5,
-    user=user1,
-    book=book3
-)
+        # Create users
+        user1 = User(
+            username="user1",
+            email="user1@example.com",
+            password="Password1!"
+        )
+        user2 = User(
+            username="user2",
+            email="user2@example.com",
+            password="Password2!"
+        )
 
-# Create some user-book relationships
-user_book1 = UserBook(
-    user=user1,
-    book=book1
-)
-user_book2 = UserBook(
-    user=user2,
-    book=book2
-)
-user_book3 = UserBook(
-    user=user1,
-    book=book3
-)
-user_book4 = UserBook(
-    user=user2,
-    book=book1
-)
+        # Create books
+        book1 = Book(
+            title="Book 1",
+            author="Author 1",
+            genre="Fiction",
+            published_date=datetime.strptime("2023-01-01", "%Y-%m-%d").date()
+        )
+        book2 = Book(
+            title="Book 2",
+            author="Author 2",
+            genre="Non-fiction",
+            published_date=datetime.strptime("2022-05-15", "%Y-%m-%d").date()
+        )
 
-# Add all to the session and commit
-db.session.add_all([user1, user2, book1, book2, book3, review1, review2, review3, user_book1, user_book2, user_book3, user_book4])
-db.session.commit()
+        # Add objects to session
+        db.session.add_all([user1, user2, book1, book2])
+        db.session.commit()
 
-print("Database seeded successfully!")
+        # Add user-book associations (favorites) manually
+        user_book1 = UserBook(user=user1, book=book1)
+        user_book2 = UserBook(user=user1, book=book2)
+        user_book3 = UserBook(user=user2, book=book2)
+
+        db.session.add_all([user_book1, user_book2, user_book3])
+        db.session.commit()
+
+        # Create reviews
+        review1 = Review(
+            content="This book is amazing!",
+            rating=5,
+            user_id=user1.id,
+            book_id=book1.id
+        )
+        review2 = Review(
+            content="Interesting read.",
+            rating=4,
+            user_id=user2.id,
+            book_id=book2.id
+        )
+
+        # Add reviews to session and commit to database
+        db.session.add_all([review1, review2])
+        db.session.commit()
+
+        print("Database seeding completed.")
+

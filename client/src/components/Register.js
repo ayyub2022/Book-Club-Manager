@@ -4,7 +4,12 @@ function Register() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleRegister = () => {
+  const handleRegister =async () => {
+    try {
+      const res = await fetch("http://localhost:5000")
+    } catch (error) {
+      
+    }
     // Handle user registration logic here
     console.log('Register', { email, password });
   };
