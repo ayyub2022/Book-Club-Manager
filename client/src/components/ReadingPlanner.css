@@ -1,5 +1,25 @@
 /* ReadingPlanner.css */
 
+/* Ensure this is the container that wraps your calendar component */
+.reading-planner-container {
+  background-image: url(www.jpg);
+  background-size: cover;  /* Adjust the size of the background image */
+  background-position: center;  /* Center the background image */
+  background-repeat: no-repeat;  /* Prevent the background image from repeating */
+  height: 100vh;  /* Make sure the container takes up the full viewport height */
+  width: 100vw;  /* Make sure the container takes up the full viewport width */
+  padding: 20px;  /* Optional: Add some padding around the content */
+}
+
+/* You may need additional styling for your calendar component itself */
+.react-calendar {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background-color: #1cb19d; /* Set a background color for the calendar to ensure it's readable */
+}
+
+
+
 .reading-planner {
   padding: 20px;
   max-width: 600px;
@@ -30,7 +50,7 @@ h2 {
 }
 
 .react-calendar__tile--now {
-  border: 2px solid #1890ff;
+  border: 2px solid #18f0ff;
 }
 
 .react-calendar__navigation {
@@ -60,7 +80,7 @@ h2 {
 .plan-form button {
   padding: 10px 20px;
   border: none;
-  background-color: #1890ff;
+  background-color: #0e7466;
   color: white;
   border-radius: 4px;
   cursor: pointer;
