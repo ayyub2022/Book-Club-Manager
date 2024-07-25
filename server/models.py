@@ -82,6 +82,7 @@ class Book(db.Model, SerializerMixin):
     author = db.Column(db.String, nullable=False)
     genre = db.Column(db.String, nullable=False)
     published_date = db.Column(db.Date(), nullable=False)
+    cover_image_url = db.Column(db.String(255))
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
 
     reviews = db.relationship("Review", back_populates="book")
