@@ -8,6 +8,8 @@ import Login from './components/Login';
 import UserProfile from './components/UserProfile';
 import Dashboard from './components/Dashboard';
 import ReadingPlanner from './components/ReadingPlanner';
+import Discoveries from './components/Discoveries';
+
 
 function App() {
   const isAuthenticated = Boolean(localStorage.getItem('jwt_token')); // Replace with actual auth check
@@ -16,6 +18,7 @@ function App() {
     <Router>
       <Navbar /> {/* Render Navbar on all pages */}
       <Routes>
+        <Route path="/discoveries" component={Discoveries} /> 
         <Route path="/reading-planner" element={<ReadingPlanner />} /> 
         <Route path="/" element={<Home />} /> {/* Home component as landing page */}
         <Route path="/login" element={<Login />} />
@@ -28,7 +31,6 @@ function App() {
 }
 
 export default App;
-
 
 
 
