@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [username, setUserame] = useState(null);
+  const [username, setUserame] = useState("");
   const navigate = useNavigate();
 
   const handleRegister = async (e) => {
