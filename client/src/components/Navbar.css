@@ -1,10 +1,95 @@
+
+body {
+  margin: 0;
+  font-family: 'Arial', sans-serif;
+}
+
 .navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  background-color: #16b4a7; /* Primary blue background */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
+}
+
+.navbar-icon {
+  width: 50px;
+  height: 50px;
+  margin-right: 15px;
+  border-radius: 50%; /* Rounded icon */
+  background-color: #ffffff; /* White background for icon */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.5rem;
+  color: #1e90ff; /* Blue text/icon color */
+}
+
+.navbar-title {
+  font-size: 26px;
+  font-weight: bold;
+  color: #ffffff; /* White text color */
+  margin: 0;
+}
+
+.navbar-links {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar-links li {
+  margin: 0;
+}
+
+.navbar-links a {
+  text-decoration: none;
+  color: #ffffff; /* White text color */
+  font-size: 18px;
+  transition: color 0.3s;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+.navbar-links a:hover {
+  color: #32c8cd; /* Green color on hover */
+  background-color: rgba(9, 8, 68, 0.753); /* Light white background on hover */
+}
+
+.navbar-links .active {
+  color: #32cd32; /* Green color for active link */
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .navbar-links {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}
+
+
+
+/* .navbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 10px 20px;
-    background-color: #f8f9fa; /* Light grey background */
-    border-bottom: 1px solid #e0e0e0; /* Light grey border */
+    background-color: #f8f9fa; 
+    border-bottom: 1px solid #e0e0e0; 
   }
   
   .navbar-left {
@@ -13,8 +98,8 @@
   }
   
   .navbar-icon {
-    width: 40px; /* Adjust size as needed */
-    height: 40px; /* Adjust size as needed */
+    width: 40px; 
+    height: 40px; 
     margin-right: 10px;
   }
   
@@ -35,11 +120,11 @@
   
   .navbar-links a {
     text-decoration: none;
-    color: #000; /* Black text color */
+    color: #000;
     font-size: 18px;
   }
   
   .navbar-links a:hover {
-    color: #007bff; /* Blue text color on hover */
+    color: #007bff;
   }
-  
+   */
