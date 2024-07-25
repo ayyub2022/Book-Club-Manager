@@ -159,6 +159,8 @@ class UserBook(Resource):
         db.session.commit()
         return jsonify(new_user_book.to_dict()), 201
 
+api.add_resource(UserBook, '/userbook', '/userbook/<int:id>')
+
 
 
 if __name__ == '__main__':
