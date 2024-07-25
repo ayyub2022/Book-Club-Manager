@@ -26,28 +26,28 @@ def make_books():
     users = User.query.all()
 
     books = [
-        {"title": "To Kill a Mockingbird", "author": "Harper Lee", "genre": "Fiction", "published_date": "1960-07-11"},
-        {"title": "1984", "author": "George Orwell", "genre": "Dystopian", "published_date": "1949-06-08"},
-        {"title": "The Great Gatsby", "author": "F. Scott Fitzgerald", "genre": "Fiction", "published_date": "1925-04-10"},
-        {"title": "Pride and Prejudice", "author": "Jane Austen", "genre": "Romance", "published_date": "1813-01-28"},
-        {"title": "The Catcher in the Rye", "author": "J.D. Salinger", "genre": "Fiction", "published_date": "1951-07-16"},
-        {"title": "The Hobbit", "author": "J.R.R. Tolkien", "genre": "Fantasy", "published_date": "1937-09-21"},
-        {"title": "Fahrenheit 451", "author": "Ray Bradbury", "genre": "Dystopian", "published_date": "1953-10-19"},
-        {"title": "Brave New World", "author": "Aldous Huxley", "genre": "Dystopian", "published_date": "1932-08-30"},
-        {"title": "The Lord of the Rings", "author": "J.R.R. Tolkien", "genre": "Fantasy", "published_date": "1954-07-29"},
-        {"title": "The Diary of a Young Girl", "author": "Anne Frank", "genre": "Biography", "published_date": "1947-06-25"},
-        {"title": "Harry Potter and the Philosopher's Stone", "author": "J.K. Rowling", "genre": "Fantasy", "published_date": "1997-06-26"},
-        {"title": "The Da Vinci Code", "author": "Dan Brown", "genre": "Thriller", "published_date": "2003-03-18"},
-        {"title": "The Alchemist", "author": "Paulo Coelho", "genre": "Adventure", "published_date": "1988-05-01"},
-        {"title": "Moby Dick", "author": "Herman Melville", "genre": "Adventure", "published_date": "1851-10-18"},
-        {"title": "War and Peace", "author": "Leo Tolstoy", "genre": "Historical", "published_date": "1869-01-01"},
-        {"title": "Les Misérables", "author": "Victor Hugo", "genre": "Historical", "published_date": "1862-01-01"},
-        {"title": "Anna Karenina", "author": "Leo Tolstoy", "genre": "Fiction", "published_date": "1877-01-01"},
-        {"title": "The Odyssey", "author": "Homer", "genre": "Epic", "published_date": "0001-01-01"},
-        {"title": "The Iliad", "author": "Homer", "genre": "Epic", "published_date": "0001-01-01"},
-        {"title": "Don Quixote", "author": "Miguel de Cervantes", "genre": "Adventure", "published_date": "1605-01-16"},
-        {"title": "Catch-22", "author": "Joseph Heller", "genre": "Satire", "published_date": "1961-11-10"},
-        {"title": "The Road", "author": "Cormac McCarthy", "genre": "Post-apocalyptic", "published_date": "2006-09-26"},
+        {"title": "To Kill a Mockingbird", "author": "Harper Lee", "genre": "Fiction", "published_date": "1960-07-11", "cover_image_url": "https://media.glamour.com/photos/56e1f3c562b398fa64cbd310/master/w_1600%252Cc_limit/entertainment-2016-02-07-main.jpg"},
+        {"title": "1984", "author": "George Orwell", "genre": "Dystopian", "published_date": "1949-06-08", "cover_image_url": "https://images-na.ssl-images-amazon.com/images/I/71kxa1-0mfL.jpg"},
+        {"title": "The Great Gatsby", "author": "F. Scott Fitzgerald", "genre": "Fiction", "published_date": "1925-04-10", "cover_image_url": "https://images-na.ssl-images-amazon.com/images/I/81af+MCATTL.jpg"},
+        {"title": "Pride and Prejudice", "author": "Jane Austen", "genre": "Romance", "published_date": "1813-01-28", "cover_image_url": "https://images-na.ssl-images-amazon.com/images/I/91HHxxtA1wL.jpg"},
+        {"title": "The Catcher in the Rye", "author": "J.D. Salinger", "genre": "Fiction", "published_date": "1951-07-16", "cover_image_url": "https://images-na.ssl-images-amazon.com/images/I/81OthjkJBuL.jpg"},
+        {"title": "The Hobbit", "author": "J.R.R. Tolkien", "genre": "Fantasy", "published_date": "1937-09-21", "cover_image_url": "https://images-na.ssl-images-amazon.com/images/I/91b0C2YNSrL.jpg"},
+        {"title": "Fahrenheit 451", "author": "Ray Bradbury", "genre": "Dystopian", "published_date": "1953-10-19", "cover_image_url": "https://images-na.ssl-images-amazon.com/images/I/71OFqSRFDgL.jpg"},
+        {"title": "Brave New World", "author": "Aldous Huxley", "genre": "Dystopian", "published_date": "1932-08-30", "cover_image_url": "https://images-na.ssl-images-amazon.com/images/I/81ExhpBEbHL.jpg"},
+        {"title": "The Lord of the Rings", "author": "J.R.R. Tolkien", "genre": "Fantasy", "published_date": "1954-07-29", "cover_image_url": "https://images-na.ssl-images-amazon.com/images/I/91dSMhdIzTL.jpg"},
+        {"title": "The Diary of a Young Girl", "author": "Anne Frank", "genre": "Biography", "published_date": "1947-06-25", "cover_image_url": "https://images-na.ssl-images-amazon.com/images/I/91eMN5+0PlL.jpg"},
+        {"title": "Harry Potter and the Philosopher's Stone", "author": "J.K. Rowling", "genre": "Fantasy", "published_date": "1997-06-26", "cover_image_url": "https://images-na.ssl-images-amazon.com/images/I/81YOuOGFCJL.jpg"},
+        {"title": "The Da Vinci Code", "author": "Dan Brown", "genre": "Thriller", "published_date": "2003-03-18", "cover_image_url": "https://images-na.ssl-images-amazon.com/images/I/81Q3NuA2QUL.jpg"},
+        {"title": "The Alchemist", "author": "Paulo Coelho", "genre": "Adventure", "published_date": "1988-05-01", "cover_image_url": "https://images-na.ssl-images-amazon.com/images/I/81m4HXy8JDL.jpg"},
+        {"title": "Moby Dick", "author": "Herman Melville", "genre": "Adventure", "published_date": "1851-10-18", "cover_image_url": "https://images-na.ssl-images-amazon.com/images/I/81PRvAB7%2BfL.jpg"},
+        {"title": "War and Peace", "author": "Leo Tolstoy", "genre": "Historical", "published_date": "1869-01-01", "cover_image_url": "https://images-na.ssl-images-amazon.com/images/I/91MVwp07MnL.jpg"},
+        {"title": "Les Misérables", "author": "Victor Hugo", "genre": "Historical", "published_date": "1862-01-01", "cover_image_url": "https://images-na.ssl-images-amazon.com/images/I/91N4f9VRRAL.jpg"},
+        {"title": "Anna Karenina", "author": "Leo Tolstoy", "genre": "Fiction", "published_date": "1877-01-01", "cover_image_url": "https://images-na.ssl-images-amazon.com/images/I/81%2BtIibE84L.jpg"},
+        {"title": "The Odyssey", "author": "Homer", "genre": "Epic", "published_date": "0001-01-01", "cover_image_url": "https://images-na.ssl-images-amazon.com/images/I/81c8rZx6nxL.jpg"},
+        {"title": "The Iliad", "author": "Homer", "genre": "Epic", "published_date": "0001-01-01", "cover_image_url": "https://images-na.ssl-images-amazon.com/images/I/91mGr4wS5OL.jpg"},
+        {"title": "Don Quixote", "author": "Miguel de Cervantes", "genre": "Adventure", "published_date": "1605-01-16", "cover_image_url": "https://images-na.ssl-images-amazon.com/images/I/81s6DUyQCZL.jpg"},
+        {"title": "Catch-22", "author": "Joseph Heller", "genre": "Satire", "published_date": "1961-11-10", "cover_image_url": "https://images-na.ssl-images-amazon.com/images/I/71kZ9kMDgmL.jpg"},
+        {"title": "The Road", "author": "Cormac McCarthy", "genre": "Post-apocalyptic", "published_date": "2006-09-26", "cover_image_url": "https://images-na.ssl-images-amazon.com/images/I/71Ew5ZEdz3L.jpg"},
     ]
     
     def parse_date(date_string):
@@ -66,6 +66,11 @@ def make_books():
 
     db.session.add_all(book_objects)
     db.session.commit()
+    
+    # Verify insertion
+    for book in Book.query.all():
+        print(f"{book.title}: {book.cover_image_url}")
+    
     print("Books seeding completed.")
 
 def make_user_books():
@@ -87,11 +92,10 @@ def make_user_books():
 
 def make_reviews():
     print("Seeding reviews...")
-    Review.query.delete()  # Clear existing reviews
+    Review.query.delete()
 
     review_list = []
 
-    # Define review contents and ratings for each book
     reviews = [
         ["An incredible page-turner, couldn't put it down!", "The characters felt so real and relatable.", "A bit slow in the middle, but worth the wait.", "Great storytelling, but the ending was predictable.", "Loved the author's writing style!", "Not my cup of tea, but others might enjoy it."],
         ["Beautifully written, a true masterpiece.", "The plot was a bit convoluted.", "Engaging from start to finish.", "Great character development, but the pacing was off."],
@@ -144,8 +148,8 @@ def make_reviews():
     ]
     ratings.append([4, 3, 5])
 
-    num_books = Book.query.count()  # Get the actual count of books
-    num_users = User.query.count()  # Get the actual count of users
+    num_books = Book.query.count()
+    num_users = User.query.count()
 
     print(f"Total books: {num_books}")
     print(f"Total users: {num_users}")
@@ -158,15 +162,14 @@ def make_reviews():
             print(f"Warning: No reviews or ratings available for book_id {book_id}.")
             continue
 
-        book_reviews = reviews[book_id - 1]  # Get reviews for the current book
-        book_ratings = ratings[book_id - 1]  # Get ratings for the current book
+        book_reviews = reviews[book_id - 1]
+        book_ratings = ratings[book_id - 1]
 
         for i in range(len(book_reviews)):
-            user_id = randint(1, num_users)  # Randomly select a user_id
-            rating = book_ratings[i % len(book_ratings)]  # Ensure rating is within range
+            user_id = randint(1, num_users)
+            rating = book_ratings[i % len(book_ratings)]
             content = book_reviews[i]
 
-            # Debugging print statement
             print(f"Creating review: user_id={user_id}, book_id={book_id}, rating={rating}, content={content}")
 
             review = Review(
@@ -177,7 +180,6 @@ def make_reviews():
             )
             review_list.append(review)
 
-    # Add all reviews to the database and commit
     db.session.add_all(review_list)
     db.session.commit()
     print("Reviews seeding completed.")
