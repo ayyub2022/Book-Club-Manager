@@ -1,0 +1,44 @@
+# Ignore Python byte code and environment folders
+__pycache__/
+*.pyc
+venv/
+.env
+
+# Ignore Node.js dependencies
+node_modules/
+
+# Ignore built React files
+/build/
+
+# Ignore log files
+*.log
+
+# Ignore database files (if SQLite or similar)
+*.db
+
+# Ignore system and IDE files
+.DS_Store
+.idea/
+.vscode/
+
+# Ignore environment configuration files
+.env
+
+# Ignore any sensitive or private files
+config.ini
+
+# Ignore package-lock.json for npm
+package-lock.json
+
+# Ignore .pytest_cache for pytest
+.pytest_cache/
+
+# Ignore any backups
+*~
+
+# Ignore OS generated files
+ehthumbs.db
+Thumbs.db
+
+# Ignore any personal or development files
+*.bak
