@@ -80,7 +80,7 @@ class Book(db.Model, SerializerMixin):
     title = db.Column(db.String, nullable=False)
     author = db.Column(db.String, nullable=False)
     genre = db.Column(db.String, nullable=False)
-    published_date = db.Column(db.Date, nullable=False)
+    published_date = db.Column(db.Date(), nullable=False)
 
     reviews = db.relationship("Review", back_populates="book")
     favorited_by = association_proxy("user_books", "user")
@@ -91,9 +91,7 @@ class Book(db.Model, SerializerMixin):
             "title": self.title,
             "author": self.author,
             "genre": self.genre,
-            "published_date": (
-                self.published_date.isoformat() if self.published_date else None
-            ),
+            "published_date":(self.published_date.strftime("%Y-%m-%d") if self.published_date else None ),
         }
 
 

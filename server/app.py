@@ -3,6 +3,7 @@ from flask_migrate import Migrate
 from flask_restful import Resource, Api
 from flask_cors import CORS
 from models import db, User, Book, Review, UserBook
+from datetime import datetime
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///site.db"
@@ -18,6 +19,7 @@ api = Api(app)
 # Instantiate CORS
 CORS(app)
 
+
 class BookResource(Resource):
     def get(self, id=None):
         try:
@@ -28,24 +30,26 @@ class BookResource(Resource):
                 book = Book.query.get_or_404(id)
                 return jsonify(book.to_dict())
         except Exception as e:
-            return {'message': str(e)}, 500
+            return {"message": str(e)}, 500
 
     def post(self):
         data = request.get_json()
         if not data:
             return {"message": "No input data provided"}, 400
-        
+
         try:
+
             new_book = Book(
-                title=data['title'],
-                author=data['author'],
-                genre=data['genre']
+                title=data["title"],
+                author=data["author"],
+                genre=data["genre"],
+                published_date=datetime.strptime(data["published_date"], "%Y-%m-%d").date(),
             )
             db.session.add(new_book)
             db.session.commit()
-            return jsonify(new_book.to_dict()), 201
+            return jsonify(new_book.to_dict())
         except Exception as e:
-            return {'message': str(e)}, 500
+            return {"message": str(e)}, 500
 
     def put(self, id=None):
         if id is None:
@@ -57,14 +61,38 @@ class BookResource(Resource):
 
         try:
             book = Book.query.get_or_404(id)
-            book.title = data.get('title', book.title)
-            book.author = data.get('author', book.author)
-            book.genre = data.get('genre', book.genre)
-        
+            book.title = data.get("title", book.title)
+            book.author = data.get("author", book.author)
+            book.genre = data.get("genre", book.genre)
+
+            if "published_date" in data:
+                book.published_date = datetime.strptime(
+                    data["published_date"], "%Y-%m-%d"
+                ).date()  # Parse date
+
             db.session.commit()
             return jsonify(book.to_dict())
         except Exception as e:
-            return {'message': str(e)}, 500
+            return {"message": str(e)}, 500
+
+    def put(self, id=None):
+        if id is None:
+            return {"message": "ID must be provided for update"}, 400
+
+        data = request.get_json()
+        if not data:
+            return {"message": "No input data provided"}, 400
+
+        try:
+            book = Book.query.get_or_404(id)
+            book.title = data.get("title", book.title)
+            book.author = data.get("author", book.author)
+            book.genre = data.get("genre", book.genre)
+
+            db.session.commit()
+            return jsonify(book.to_dict())
+        except Exception as e:
+            return {"message": str(e)}, 500
 
     def delete(self, id=None):
         if id is None:
@@ -76,9 +104,11 @@ class BookResource(Resource):
             db.session.commit()
             return {"message": "Book deleted"}, 204
         except Exception as e:
-            return {'message': str(e)}, 500
+            return {"message": str(e)}, 500
 
-api.add_resource(BookResource, '/book', '/book/<int:id>')
+
+api.add_resource(BookResource, "/book", "/book/<int:id>")
+
 
 class ReviewResource(Resource):
     def get(self, id=None):
@@ -90,7 +120,7 @@ class ReviewResource(Resource):
                 review = Review.query.get_or_404(id)
                 return jsonify(review.to_dict())
         except Exception as e:
-            return {'message': str(e)}, 500
+            return {"message": str(e)}, 500
 
     def post(self):
         data = request.get_json()
@@ -108,7 +138,7 @@ class ReviewResource(Resource):
             db.session.commit()
             return jsonify(new_review.to_dict()), 201
         except Exception as e:
-            return {'message': str(e)}, 500
+            return {"message": str(e)}, 500
 
     def put(self, id=None):
         if id is None:
@@ -128,7 +158,7 @@ class ReviewResource(Resource):
             db.session.commit()
             return jsonify(review.to_dict()), 200
         except Exception as e:
-            return {'message': str(e)}, 500
+            return {"message": str(e)}, 500
 
     def delete(self, id=None):
         if id is None:
@@ -140,9 +170,11 @@ class ReviewResource(Resource):
             db.session.commit()
             return {"message": "Review deleted"}, 204
         except Exception as e:
-            return {'message': str(e)}, 500
+            return {"message": str(e)}, 500
+
 
 api.add_resource(ReviewResource, "/review", "/review/<int:id>")
+
 
 class UserResource(Resource):
     def get(self, id=None):
@@ -160,15 +192,19 @@ class UserResource(Resource):
 
         try:
             new_user = User(
-                username=data["username"], email=data["email"], _password=data["_password"]
+                username=data["username"],
+                email=data["email"],
+                _password=data["_password"],
             )
             db.session.add(new_user)
             db.session.commit()
             return jsonify(new_user.to_dict()), 201
         except Exception as e:
-            return {'message': str(e)}, 500
+            return {"message": str(e)}, 500
+
 
 api.add_resource(UserResource, "/user", "/user/<int:id>")
+
 
 class UserBookResource(Resource):
     def get(self, id=None):
@@ -180,7 +216,7 @@ class UserBookResource(Resource):
                 user_book = UserBook.query.get_or_404(id)
                 return jsonify(user_book.to_dict())
         except Exception as e:
-            return {'message': str(e)}, 500
+            return {"message": str(e)}, 500
 
     def post(self):
         data = request.get_json()
@@ -193,7 +229,8 @@ class UserBookResource(Resource):
             db.session.commit()
             return jsonify(new_user_book.to_dict()), 201
         except Exception as e:
-            return {'message': str(e)}, 500
+            return {"message": str(e)}, 500
+
 
 api.add_resource(UserBookResource, "/userbook", "/userbook/<int:id>")
 
