@@ -61,7 +61,7 @@ class Book(Resource):
         db.session.commit()
         return {"message": "Book deleted"}, 204
     
-api.add_resource(Book, '/book', '/book/<int:id>')
+
 
 
 class Review(Resource):
@@ -108,7 +108,7 @@ class Review(Resource):
         db.session.commit()
         return {"message": "Review deleted"}, 204
     
-api.add_resource(Review, '/review', '/review/<int:id>')
+
 
 
 class User(Resource):
@@ -134,7 +134,7 @@ class User(Resource):
         db.session.commit()
         return jsonify(new_user.to_dict()), 201
     
-api.add_resource(User, '/user', '/user/<int:id>')
+
 
 
 class UserBook(Resource):
@@ -158,7 +158,13 @@ class UserBook(Resource):
         db.session.add(new_user_book)
         db.session.commit()
         return jsonify(new_user_book.to_dict()), 201
+    
+    
 
+
+api.add_resource(Book, '/book', '/book/<int:id>')
+api.add_resource(Review, '/review', '/review/<int:id>')
+api.add_resource(User, '/user', '/user/<int:id>')
 api.add_resource(UserBook, '/userbook', '/userbook/<int:id>')
 
 
