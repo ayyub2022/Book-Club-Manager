@@ -104,7 +104,7 @@ class Review(db.Model, SerializerMixin):
     rating = db.Column(db.Integer, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     book_id = db.Column(db.Integer, db.ForeignKey("books.id"), nullable=False)
-
+    date = db.Column(db.Date, nullable=False) 
     user = db.relationship("User", back_populates="reviews")
     book = db.relationship("Book", back_populates="reviews")
 
