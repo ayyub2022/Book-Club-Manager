@@ -1,12 +1,21 @@
 import React, { useState } from "react";
+import { useNavigate } from 'react-router-dom';
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    // Handle user login logic here
+
+    // Basic validation
+    if (!email || !password) {
+      setError("Please enter both email and password.");
+      return;
+    }
+
     try {
       const res = await fetch("http://localhost:5555/login", {
         method: "POST",
@@ -17,21 +26,22 @@ function Login() {
       });
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data);
+        throw new Error(data.message || "Login failed");
       } else if (data.access_token) {
-        console.log(data.access_token)
-        localStorage.setItem("access_token", data.access_token);
-        localStorage.setItem("refresh_token", data.refresh_token);
+        localStorage.setItem("jwt_token", data.access_token);
+        localStorage.setItem("jwt_refresh_token", data.refresh_token);
+        navigate("/dashboard"); // Corrected spelling
       }
     } catch (error) {
-      console.log(error);
+      setError(error.message);
     }
   };
 
   return (
     <div className="container">
-      <form>
+      <form onSubmit={handleLogin}>
         <h2>Login</h2>
+        {error && <p className="error">{error}</p>}
         <input
           type="email"
           placeholder="Email"
@@ -44,9 +54,7 @@ function Login() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <button type="button" onClick={handleLogin}>
-          Login
-        </button>
+        <button type="submit">Login</button>
       </form>
     </div>
   );

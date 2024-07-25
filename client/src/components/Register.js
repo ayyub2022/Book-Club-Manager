@@ -1,10 +1,11 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUserame] = useState(null);
-  const [tocken,setTocken]=useState(null)
+  const navigate = useNavigate();
 
   const handleRegister = async (e) => {
     // Handle user registration logic here
@@ -16,11 +17,13 @@ function Register() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ username,email, password }),
+        body: JSON.stringify({ username, email, password }),
       });
       const data = await res.json();
       if (!res.ok) {
         throw new Error(data);
+      } else {
+        navigate("/login");
       }
     } catch (error) {
       console.log(error);
