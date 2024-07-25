@@ -1,0 +1,99 @@
+/* ReadingPlanner.css */
+
+.reading-planner {
+  padding: 20px;
+  max-width: 600px;
+  margin: auto;
+  font-family: Arial, sans-serif;
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.calendar {
+  border: none;
+  width: 100%;
+  max-width: 100%;
+}
+
+.react-calendar__tile {
+  background-color: #f0f8ff;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+.react-calendar__tile:active,
+.react-calendar__tile:focus {
+  background-color: #e6f7ff;
+}
+
+.react-calendar__tile--now {
+  border: 2px solid #1890ff;
+}
+
+.react-calendar__navigation {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.react-calendar__navigation__label {
+  font-weight: bold;
+}
+
+.plan-form {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.plan-form input {
+  padding: 10px;
+  margin-right: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  width: 200px;
+}
+
+.plan-form button {
+  padding: 10px 20px;
+  border: none;
+  background-color: #1890ff;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.plan-form button:hover {
+  background-color: #40a9ff;
+}
+
+.plan-list {
+  list-style: none;
+  padding: 0;
+}
+
+.plan-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  background-color: #f9f9f9;
+}
+
+.plan-list li button {
+  border: none;
+  background-color: transparent;
+  color: #1890ff;
+  cursor: pointer;
+  margin-left: 10px;
+  transition: color 0.3s;
+}
+
+.plan-list li button:hover {
+  color: #40a9ff;
+}

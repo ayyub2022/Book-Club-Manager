@@ -7,6 +7,7 @@ import Home from './components/Home'; // Change to your Home component path
 import Login from './components/Login';
 import UserProfile from './components/UserProfile';
 import Dashboard from './components/Dashboard';
+import ReadingPlanner from './components/ReadingPlanner';
 
 function App() {
   const isAuthenticated = Boolean(localStorage.getItem('jwt_token')); // Replace with actual auth check
@@ -15,6 +16,7 @@ function App() {
     <Router>
       <Navbar /> {/* Render Navbar on all pages */}
       <Routes>
+        <Route path="/reading-planner" element={<ReadingPlanner />} /> 
         <Route path="/" element={<Home />} /> {/* Home component as landing page */}
         <Route path="/login" element={<Login />} />
         <Route path="/dashboard" element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" />} />
