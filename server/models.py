@@ -4,10 +4,8 @@ from sqlalchemy.orm import validates
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy import func
 import re
-from flask import url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
-from datetime import date
 
 db = SQLAlchemy()
 bcrypt = Bcrypt()
@@ -71,6 +69,9 @@ class User(db.Model, SerializerMixin):
             "email": self.email,
         }
 
+    def __repr__(self) -> str:
+        return f"password {self._password}"
+
 
 class Book(db.Model, SerializerMixin):
     __tablename__ = "books"
@@ -81,6 +82,7 @@ class Book(db.Model, SerializerMixin):
     author = db.Column(db.String, nullable=False)
     genre = db.Column(db.String, nullable=False)
     published_date = db.Column(db.Date(), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
 
     reviews = db.relationship("Review", back_populates="book")
     favorited_by = association_proxy("user_books", "user")
@@ -91,7 +93,11 @@ class Book(db.Model, SerializerMixin):
             "title": self.title,
             "author": self.author,
             "genre": self.genre,
-            "published_date":(self.published_date.strftime("%Y-%m-%d") if self.published_date else None ),
+            "published_date": (
+                self.published_date.strftime("%Y-%m-%d")
+                if self.published_date
+                else None
+            ),
         }
 
 
@@ -104,15 +110,9 @@ class Review(db.Model, SerializerMixin):
     rating = db.Column(db.Integer, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     book_id = db.Column(db.Integer, db.ForeignKey("books.id"), nullable=False)
-    date = db.Column(db.Date, nullable=False) 
+
     user = db.relationship("User", back_populates="reviews")
     book = db.relationship("Book", back_populates="reviews")
-
-    @validates("content")
-    def validate_content(self, key, content):
-        if len(content) < 5:
-            raise ValueError("Content must be at least 5 characters long")
-        return content
 
     @validates("rating")
     def validate_rating(self, key, rating):
