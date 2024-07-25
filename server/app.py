@@ -2,13 +2,24 @@ from flask import Flask, request, jsonify
 from flask_migrate import Migrate
 from flask_restful import Resource, Api
 from flask_cors import CORS
-from models import db, User, Book, Review, UserBook
-from datetime import datetime
+from models import db, User, Book, Review, UserBook, bcrypt
+from datetime import datetime, timedelta
+from flask_jwt_extended import (
+    create_access_token,
+    get_jwt_identity,
+    jwt_required,
+    JWTManager,
+    create_refresh_token,
+)
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///site.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config["SECRET_KEY"] = "my_secret_key"
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(minutes=15)
+app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(days=30)
 app.json.compact = False
+jwt = JWTManager(app)
 
 # Initialize the database and migration tool
 db.init_app(app)
@@ -32,18 +43,23 @@ class BookResource(Resource):
         except Exception as e:
             return {"message": str(e)}, 500
 
+    @jwt_required()
     def post(self):
         data = request.get_json()
         if not data:
             return {"message": "No input data provided"}, 400
 
         try:
-
+            current_user_email = get_jwt_identity()
+            user = User.query.filter_by(email=current_user_email).first()
             new_book = Book(
                 title=data["title"],
                 author=data["author"],
                 genre=data["genre"],
-                published_date=datetime.strptime(data["published_date"], "%Y-%m-%d").date(),
+                published_date=datetime.strptime(
+                    data["published_date"], "%Y-%m-%d"
+                ).date(),
+                user_id=user.id,
             )
             db.session.add(new_book)
             db.session.commit()
@@ -51,6 +67,7 @@ class BookResource(Resource):
         except Exception as e:
             return {"message": str(e)}, 500
 
+    @jwt_required()
     def put(self, id=None):
         if id is None:
             return {"message": "ID must be provided for update"}, 400
@@ -61,6 +78,11 @@ class BookResource(Resource):
 
         try:
             book = Book.query.get_or_404(id)
+            current_user_email = get_jwt_identity()
+            user = User.query.filter_by(email=current_user_email).first()
+            if book.user_id != user.id:
+                return {"message": "You can only edit your own books"}, 403
+
             book.title = data.get("title", book.title)
             book.author = data.get("author", book.author)
             book.genre = data.get("genre", book.genre)
@@ -68,38 +90,25 @@ class BookResource(Resource):
             if "published_date" in data:
                 book.published_date = datetime.strptime(
                     data["published_date"], "%Y-%m-%d"
-                ).date()  # Parse date
+                ).date()
 
             db.session.commit()
-            return jsonify(book.to_dict())
+            return jsonify(book.to_dict()), 200
         except Exception as e:
             return {"message": str(e)}, 500
 
-    def put(self, id=None):
-        if id is None:
-            return {"message": "ID must be provided for update"}, 400
-
-        data = request.get_json()
-        if not data:
-            return {"message": "No input data provided"}, 400
-
-        try:
-            book = Book.query.get_or_404(id)
-            book.title = data.get("title", book.title)
-            book.author = data.get("author", book.author)
-            book.genre = data.get("genre", book.genre)
-
-            db.session.commit()
-            return jsonify(book.to_dict())
-        except Exception as e:
-            return {"message": str(e)}, 500
-
+    @jwt_required()
     def delete(self, id=None):
         if id is None:
             return {"message": "ID must be provided for delete"}, 400
 
         try:
             book = Book.query.get_or_404(id)
+            current_user_email = get_jwt_identity()
+            user = User.query.filter_by(email=current_user_email).first()
+            if book.user_id != user.id:
+                return {"message": "You can only delete your own books"}, 403
+
             db.session.delete(book)
             db.session.commit()
             return {"message": "Book deleted"}, 204
@@ -122,17 +131,20 @@ class ReviewResource(Resource):
         except Exception as e:
             return {"message": str(e)}, 500
 
+    @jwt_required()
     def post(self):
         data = request.get_json()
         if not data:
             return {"message": "No input data provided"}, 400
 
         try:
+            current_user_email = get_jwt_identity()
+            user = User.query.filter_by(email=current_user_email).first()
             new_review = Review(
                 content=data["content"],
                 rating=data["rating"],
                 book_id=data["book_id"],
-                user_id=data["user_id"],
+                user_id=user.id,
             )
             db.session.add(new_review)
             db.session.commit()
@@ -140,6 +152,7 @@ class ReviewResource(Resource):
         except Exception as e:
             return {"message": str(e)}, 500
 
+    @jwt_required()
     def put(self, id=None):
         if id is None:
             return {"message": "ID must be provided for update"}, 400
@@ -150,22 +163,32 @@ class ReviewResource(Resource):
 
         try:
             review = Review.query.get_or_404(id)
+            current_user_email = get_jwt_identity()
+            user = User.query.filter_by(email=current_user_email).first()
+            if review.user_id != user.id:
+                return {"message": "You can only edit your own reviews"}, 403
+
             review.content = data.get("content", review.content)
             review.rating = data.get("rating", review.rating)
             review.book_id = data.get("book_id", review.book_id)
-            review.user_id = data.get("user_id", review.user_id)
 
             db.session.commit()
             return jsonify(review.to_dict()), 200
         except Exception as e:
             return {"message": str(e)}, 500
 
+    @jwt_required()
     def delete(self, id=None):
         if id is None:
             return {"message": "ID must be provided for delete"}, 400
 
         try:
             review = Review.query.get_or_404(id)
+            current_user_email = get_jwt_identity()
+            user = User.query.filter_by(email=current_user_email).first()
+            if review.user_id != user.id:
+                return {"message": "You can only delete your own reviews"}, 403
+
             db.session.delete(review)
             db.session.commit()
             return {"message": "Review deleted"}, 204
@@ -178,27 +201,13 @@ api.add_resource(ReviewResource, "/review", "/review/<int:id>")
 
 class UserResource(Resource):
     def get(self, id=None):
-        if id is None:
-            users = [user.to_dict() for user in User.query.all()]
-            return jsonify(users)
-        else:
-            user = User.query.get_or_404(id)
-            return jsonify(user.to_dict())
-
-    def post(self):
-        data = request.get_json()
-        if not data:
-            return {"message": "No input data provided"}, 400
-
         try:
-            new_user = User(
-                username=data["username"],
-                email=data["email"],
-                _password=data["_password"],
-            )
-            db.session.add(new_user)
-            db.session.commit()
-            return jsonify(new_user.to_dict()), 201
+            if id is None:
+                users = [user.to_dict() for user in User.query.all()]
+                return jsonify(users)
+            else:
+                user = User.query.get_or_404(id)
+                return jsonify(user.to_dict())
         except Exception as e:
             return {"message": str(e)}, 500
 
@@ -218,6 +227,7 @@ class UserBookResource(Resource):
         except Exception as e:
             return {"message": str(e)}, 500
 
+    @jwt_required()
     def post(self):
         data = request.get_json()
         if not data:
@@ -227,12 +237,64 @@ class UserBookResource(Resource):
             new_user_book = UserBook(user_id=data["user_id"], book_id=data["book_id"])
             db.session.add(new_user_book)
             db.session.commit()
-            return jsonify(new_user_book.to_dict()), 201
+            return jsonify(new_user_book.to_dict())
         except Exception as e:
             return {"message": str(e)}, 500
 
 
 api.add_resource(UserBookResource, "/userbook", "/userbook/<int:id>")
+
+
+@app.route("/register", methods=["POST"])
+def register_user():
+    data = request.get_json()
+    username = data.get("username")
+    email = data.get("email")
+    password = data.get("password")
+
+    if not username or not email or not password:
+        return jsonify(message="Missing required fields"), 400
+
+    user_exists = User.query.filter_by(username=username).first()
+
+    if user_exists:
+        return jsonify(message="User already exists"), 409
+
+    new_user = User(
+        username=username,
+        email=email,
+        _password=bcrypt.generate_password_hash(password).decode("utf-8"),
+    )
+    db.session.add(new_user)
+    db.session.commit()
+    return jsonify(message=f"User {username} added successfully"), 201
+
+
+@app.route("/login", methods=["POST"])
+def login():
+    data = request.get_json()
+    email = data.get("email")
+    password = data.get("password")
+
+    if not email or not password:
+        return jsonify({"msg": "Missing email or password"}), 400
+
+    user = User.query.filter_by(email=email).first()
+    if user and bcrypt.check_password_hash(user._password, password):
+        access_token = create_access_token(identity=email)
+        refresh_token = create_refresh_token(identity=email)
+        return jsonify(access_token=access_token, refresh_token=refresh_token), 200
+    return jsonify({"msg": "Bad email or password"}), 401
+
+
+@app.route("/refresh", methods=["POST"])
+@jwt_required(refresh=True)
+def refresh():
+    current_user = get_jwt_identity()
+    new_access_token = create_access_token(identity=current_user)
+    return jsonify(access_token=new_access_token), 200
+
+
 
 if __name__ == "__main__":
     app.run(port=5555, debug=True)
