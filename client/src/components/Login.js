@@ -37,7 +37,7 @@ function Login() {
     }
   };
   const HandleClick = () => {
-    navigate("/login");
+    navigate("/register");
   };
 
   return (
