@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import {  useNavigate } from "react-router-dom";
 
 function Register() {
   const [email, setEmail] = useState("");
@@ -29,6 +29,9 @@ function Register() {
       console.log(error);
     }
   };
+  const HandleClick = ()=>{
+    navigate("/login")
+  }
 
   return (
     <div className="container">
@@ -55,6 +58,8 @@ function Register() {
         <button type="button" onClick={handleRegister}>
           Register
         </button>
+
+        <button className="link" onClick={HandleClick}>Login if you aleady have an account</button>
       </form>
     </div>
   );

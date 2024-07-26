@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -30,11 +30,14 @@ function Login() {
       } else if (data.access_token) {
         localStorage.setItem("jwt_token", data.access_token);
         localStorage.setItem("jwt_refresh_token", data.refresh_token);
-        navigate("/dashboard"); // Corrected spelling
+        navigate("/discoveries"); // Corrected spelling
       }
     } catch (error) {
       setError(error.message);
     }
+  };
+  const HandleClick = () => {
+    navigate("/login");
   };
 
   return (
@@ -55,7 +58,12 @@ function Login() {
           onChange={(e) => setPassword(e.target.value)}
         />
         <button type="submit">Login</button>
+        <button className="link" onClick={HandleClick}>
+          Register if you don't have an account
+        </button>
       </form>
+
+      {/* <Link to={<Register/>}>Register if you do not hav ean account.</Link> */}
     </div>
   );
 }

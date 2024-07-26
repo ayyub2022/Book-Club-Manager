@@ -107,3 +107,13 @@ form button:hover {
 .book-club p {
   margin-bottom: 10px;
 }
+
+button.link {
+  background-color: transparent;
+  color: blue ;
+  display: inline;;
+}
+button.link>{
+  text-decoration: blue ;
+}
+
