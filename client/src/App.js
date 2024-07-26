@@ -1,15 +1,14 @@
-
-
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Home from './components/Home'; // Change to your Home component path
 import Login from './components/Login';
 import UserProfile from './components/UserProfile';
-import Dashboard from './components/Dashboard';
+//import Dashboard from './components/Dashboard';
 import ReadingPlanner from './components/ReadingPlanner';
 import Discoveries from './components/Discoveries';
 import Register from './components/Register'
+import UserReviews from './components/Reviews';
 
 
 function App() {
@@ -26,6 +25,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         {/* <Route path="/dashboard" element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" />} /> */}
         <Route path="/profile" element={isAuthenticated ? <UserProfile /> : <Navigate to="/login" />} />
+        <Route path="/reviews" element={<UserReviews />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Router>

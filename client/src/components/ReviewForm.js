@@ -1,7 +1,6 @@
 import React from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import axios from 'axios';
 
 const ReviewForm = ({ bookId, onReviewPosted }) => {
   const initialValues = {
@@ -17,7 +16,7 @@ const ReviewForm = ({ bookId, onReviewPosted }) => {
     comment: Yup.string(),
   });
 
-  const onSubmit = (values, { setSubmitting, resetForm }) => {
+  const onSubmit = async (values, { setSubmitting, resetForm }) => {
     const token = localStorage.getItem('jwt_token');
     if (!token) {
       console.error('User is not authenticated');
@@ -25,30 +24,33 @@ const ReviewForm = ({ bookId, onReviewPosted }) => {
       return;
     }
 
-    axios.post(
-      
-      {
-        book_id: bookId,
-        rating: values.rating,
-        comment: values.comment,
-      },
-      {
+    try {
+      const response = await fetch('https://your-api-endpoint/review', {
+        method: 'POST',
         headers: {
-          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
         },
-      }
-    )
-      .then(response => {
-        console.log('Review posted successfully:', response.data);
-        onReviewPosted();
-        resetForm();
-      })
-      .catch(error => {
-        console.error('Error posting review:', error);
-      })
-      .finally(() => {
-        setSubmitting(false);
+        body: JSON.stringify({
+          book_id: bookId,
+          rating: values.rating,
+          comment: values.comment,
+        }),
       });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.json();
+      console.log('Review posted successfully:', data);
+      onReviewPosted();
+      resetForm();
+    } catch (error) {
+      console.error('Error posting review:', error);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (

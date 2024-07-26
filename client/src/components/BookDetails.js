@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import './BookDetails.css';
+import ReviewForm from './ReviewForm';
 
 // Sample books data
 const sampleBooks = [
@@ -59,6 +60,7 @@ const sampleBooks = [
 function BookDetails() {
   const { id } = useParams();
   const [book, setBook] = useState(null);
+  const [reviews, setReviews] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredBooks, setFilteredBooks] = useState([]);
 
@@ -76,6 +78,33 @@ function BookDetails() {
     );
     setFilteredBooks(results);
   }, [searchQuery]);
+
+  useEffect(() => {
+    // Fetch reviews for the book
+    fetch(`/api/books/${id}/reviews`)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(data => setReviews(data))
+      .catch(error => console.error('Error fetching reviews:', error));
+  }, [id]);
+
+  const handleReviewPosted = () => {
+    fetch(`/${id}`)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(data => setReviews(data.reviews))
+      .catch(error => console.error('Error fetching reviews:', error));
+  };
+
+
 
   if (!book) return <div>Loading...</div>;
 
@@ -101,7 +130,25 @@ function BookDetails() {
           <p><strong>Popularity:</strong> {book.popularity} / 100</p>
         </div>
       </div>
-      
+
+      <ReviewForm bookId={id} onReviewPosted={handleReviewPosted} />
+
+      <div className="reviews-section">
+        <h3>Reviews</h3>
+        {reviews.length === 0 ? (
+          <p>No reviews yet.</p>
+        ) : (
+          <ul>
+            {reviews.map(review => (
+              <li key={review.id}>
+                <p><strong>{review.author}</strong>: {review.comment}</p>
+                <p>Rating: {review.rating} / 5</p>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
       <div className="other-books">
         <h3>Other Books</h3>
         <div className="other-books-list">
