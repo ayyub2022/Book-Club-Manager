@@ -84,6 +84,7 @@ class Book(db.Model, SerializerMixin):
     published_date = db.Column(db.Date(), nullable=False)
     cover_image_url = db.Column(db.String(255))
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    is_removable = db.Column(db.Boolean, default=True)  # New field to indicate if the book can be removed
 
     reviews = db.relationship("Review", back_populates="book")
     favorited_by = association_proxy("user_books", "user")
@@ -99,6 +100,8 @@ class Book(db.Model, SerializerMixin):
                 if self.published_date
                 else None
             ),
+            "is_removable": self.is_removable , # Include the new field in the dict representation
+            "image_url":f"{self.cover_image_url}"
         }
 
 
