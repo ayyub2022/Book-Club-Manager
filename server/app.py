@@ -126,8 +126,8 @@ class ReviewResource(Resource):
                 reviews = [review.to_dict() for review in Review.query.all()]
                 return jsonify(reviews)
             else:
-                review = Review.query.get_or_404(id)
-                return jsonify(review.to_dict())
+                reviews = Review.query.filter_by(book_id=id).all()
+                return jsonify([review.to_dict() for review in reviews])
         except Exception as e:
             return {"message": str(e)}, 500
 
@@ -138,8 +138,8 @@ class ReviewResource(Resource):
             return {"message": "No input data provided"}, 400
 
         try:
-            current_user_email = get_jwt_identity()
-            user = User.query.filter_by(email=current_user_email).first()
+            current_user_id = get_jwt_identity()
+            user = User.query.filter_by(id=current_user_id).first()
             new_review = Review(
                 content=data["content"],
                 rating=data["rating"],
@@ -163,8 +163,8 @@ class ReviewResource(Resource):
 
         try:
             review = Review.query.get_or_404(id)
-            current_user_email = get_jwt_identity()
-            user = User.query.filter_by(email=current_user_email).first()
+            current_user_id = get_jwt_identity()
+            user = User.query.filter_by(id=current_user_id).first()
             if review.user_id != user.id:
                 return {"message": "You can only edit your own reviews"}, 403
 
@@ -184,8 +184,8 @@ class ReviewResource(Resource):
 
         try:
             review = Review.query.get_or_404(id)
-            current_user_email = get_jwt_identity()
-            user = User.query.filter_by(email=current_user_email).first()
+            current_user_id = get_jwt_identity()
+            user = User.query.filter_by(id=current_user_id).first()
             if review.user_id != user.id:
                 return {"message": "You can only delete your own reviews"}, 403
 
@@ -196,7 +196,7 @@ class ReviewResource(Resource):
             return {"message": str(e)}, 500
 
 
-api.add_resource(ReviewResource, "/review", "/review/<int:id>")
+api.add_resource(ReviewResource, "/review", "/review/<int:id>", "/review/book/<int:id>")
 
 
 class UserResource(Resource):
@@ -281,9 +281,8 @@ def login():
 
     user = User.query.filter_by(email=email).first()
     if user and bcrypt.check_password_hash(user._password, password):
-        access_token = create_access_token(identity=email)
-        refresh_token = create_refresh_token(identity=email)
-        return jsonify(access_token=access_token, refresh_token=refresh_token), 200
+        access_token = create_access_token(identity=user.id)
+        return jsonify(access_token=access_token, user_id=user.id), 200
     return jsonify({"msg": "Bad email or password"}), 401
 
 
@@ -294,6 +293,78 @@ def refresh():
     new_access_token = create_access_token(identity=current_user)
     return jsonify(access_token=new_access_token), 200
 
+
+@app.route("/user/profile", methods=["GET"])
+@jwt_required()
+def get_user_profile():
+    current_user_id = get_jwt_identity()
+    user = User.query.get(current_user_id)
+    if user is None:
+        return jsonify({"error": "User not found"}), 404
+
+    favorite_books = user.favorite_books
+
+    user_profile = {
+        "id": user.id,
+        "username": user.username,
+        "email": user.email,
+        "favorites": [book.to_dict() for book in favorite_books],
+    }
+
+    return jsonify(user_profile), 200
+
+
+class FavoriteResource(Resource):
+    @jwt_required()
+    def post(self):
+        data = request.get_json()
+        book_id = data.get("book_id")
+        current_user_id = get_jwt_identity()
+        user = User.query.get(current_user_id)
+
+        if user is None:
+            return {"error": "User not found"}, 404
+
+        book = Book.query.get(book_id)
+        if book is None:
+            return {"error": "Book not found"}, 404
+
+        if book in user.favorite_books:
+            return {"error": "Book already in favorites"}, 400
+
+        user_book = UserBook(user=user, book=book)
+        db.session.add(user_book)
+        db.session.commit()
+
+        return book.to_dict(), 200
+
+    @jwt_required()
+    def delete(self):
+        data = request.get_json()
+        book_id = data.get("book_id")
+        current_user_id = get_jwt_identity()
+        user = User.query.get(current_user_id)
+
+        if user is None:
+            return {"error": "User not found"}, 404
+
+        book = Book.query.get(book_id)
+        if book is None:
+            return {"error": "Book not found"}, 404
+
+        if book not in user.favorite_books:
+            return {"error": "Book not in favorites"}, 400
+
+        user_book = UserBook.query.filter_by(user_id=current_user_id, book_id=book_id).first()
+        if user_book:
+            db.session.delete(user_book)
+            db.session.commit()
+            return {"message": "Book removed from favorites"}, 200
+
+        return {"error": "Failed to remove book from favorites"}, 500
+
+
+api.add_resource(FavoriteResource, "/user/favorites")
 
 
 if __name__ == "__main__":

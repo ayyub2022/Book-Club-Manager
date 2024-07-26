@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./Home.css"; // Ensure you have this CSS file for general styling
 
-const BookCard = ({ book }) => {
+const BookCard = ({ book, addToFavorites }) => {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
@@ -18,16 +18,33 @@ const BookCard = ({ book }) => {
       <p>{book.author}</p>
       {isHovered && (
         <div className="book-popup">
-          <p><strong>Title:</strong> {book.title}</p>
-          <p><strong>Author:</strong> {book.author}</p>
-          <p><strong>Genre:</strong> {book.genre}</p>
-          <p><strong>Description:</strong> {book.description}</p>
-          <p><strong>Published:</strong> {book.published}</p>
-          <p><strong>ISBN:</strong> {book.isbn}</p>
-          <p><strong>Pages:</strong> {book.pages}</p>
-          <p><strong>Language:</strong> {book.language}</p>
+          <p>
+            <strong>Title:</strong> {book.title}
+          </p>
+          <p>
+            <strong>Author:</strong> {book.author}
+          </p>
+          <p>
+            <strong>Genre:</strong> {book.genre}
+          </p>
+          <p>
+            <strong>Description:</strong> {book.description}
+          </p>
+          <p>
+            <strong>Published:</strong> {book.published}
+          </p>
+          <p>
+            <strong>ISBN:</strong> {book.isbn}
+          </p>
+          <p>
+            <strong>Pages:</strong> {book.pages}
+          </p>
+          <p>
+            <strong>Language:</strong> {book.language}
+          </p>
         </div>
       )}
+      <button onClick={() => addToFavorites(book.id)}>Add to Favorites</button>
     </div>
   );
 };
@@ -54,6 +71,29 @@ function Home() {
     getBooks();
   }, []);
 
+  const addToFavorites = async (bookId) => {
+    try {
+      const token = localStorage.getItem("jwt_token");
+      const response = await fetch("http://localhost:5555/user/favorites", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ book_id: bookId }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to add favorite book");
+      }
+
+      const data = await response.json();
+      console.log(data.message);
+    } catch (error) {
+      console.error("Error adding favorite book:", error);
+    }
+  };
+
   const filteredBooks = featuredBooks.filter((book) =>
     book.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -66,7 +106,11 @@ function Home() {
           featuredBooks.map((book) => (
             <div className="featured-book-card" key={book.id}>
               <img
-                src={book.image ? book.image : "https://i.stack.imgur.com/mwFzF.png"}
+                src={
+                  book.image
+                    ? book.image
+                    : "https://i.stack.imgur.com/mwFzF.png"
+                }
                 alt={book.title}
               />
               <h4>{book.title}</h4>
@@ -88,7 +132,13 @@ function Home() {
       />
       <div className="home-book-list">
         {filteredBooks.length > 0 ? (
-          filteredBooks.map((book) => <BookCard key={book.id} book={book} />)
+          filteredBooks.map((book) => (
+            <BookCard
+              key={book.id}
+              book={book}
+              addToFavorites={addToFavorites}
+            />
+          ))
         ) : (
           <p>No books found</p>
         )}

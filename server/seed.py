@@ -25,6 +25,7 @@ def make_books():
     Book.query.delete()
     users = User.query.all()
 
+
     books = [
         {"title": "To Kill a Mockingbird", "author": "Harper Lee", "genre": "Fiction", "published_date": "1960-07-11", "cover_image_url": "https://media.glamour.com/photos/56e1f3c562b398fa64cbd310/master/w_1600%252Cc_limit/entertainment-2016-02-07-main.jpg"},
         {"title": "1984", "author": "George Orwell", "genre": "Dystopian", "published_date": "1949-06-08", "cover_image_url": "https://images-na.ssl-images-amazon.com/images/I/71kxa1-0mfL.jpg"},
@@ -81,8 +82,12 @@ def make_user_books():
     users = User.query.all()
     books = Book.query.all()
 
+    if not users or not books:
+        print("Error: No users or books available for seeding.")
+        return
+
     for user in users:
-        favorite_books = fake.random_elements(elements=books, unique=True, length=5)
+        favorite_books = fake.random_elements(elements=books, unique=True, length=min(5, len(books)))
         for book in favorite_books:
             user_books.append(UserBook(user=user, book=book))
 
@@ -90,12 +95,12 @@ def make_user_books():
     db.session.commit()
     print("User-books seeding completed.")
 
+
 def make_reviews():
     print("Seeding reviews...")
     Review.query.delete()
 
     review_list = []
-
     reviews = [
         ["An incredible page-turner, couldn't put it down!", "The characters felt so real and relatable.", "A bit slow in the middle, but worth the wait.", "Great storytelling, but the ending was predictable.", "Loved the author's writing style!", "Not my cup of tea, but others might enjoy it."],
         ["Beautifully written, a true masterpiece.", "The plot was a bit convoluted.", "Engaging from start to finish.", "Great character development, but the pacing was off."],

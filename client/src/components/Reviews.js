@@ -17,7 +17,7 @@ const UserReviews = () => {
           return;
         }
 
-        const response = await axios.get('PATH', {
+        const response = await axios.get('', {
           headers: {
             Authorization: `Bearer ${token}`
           }

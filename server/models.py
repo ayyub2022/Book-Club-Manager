@@ -154,3 +154,5 @@ class UserBook(db.Model, SerializerMixin):
             "user_id": f"{self.user_id}",
             "book_id": f"{self.book_id}",
         }
+
+

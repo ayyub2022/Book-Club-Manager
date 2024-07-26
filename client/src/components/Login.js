@@ -29,7 +29,7 @@ function Login() {
         throw new Error(data.message || "Login failed");
       } else if (data.access_token) {
         localStorage.setItem("jwt_token", data.access_token);
-        localStorage.setItem("jwt_refresh_token", data.refresh_token);
+        localStorage.setItem("user_id", data.user_id);
         navigate("/"); // Corrected spelling
       }
     } catch (error) {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './BookCard.css'; // Import the CSS file for styling
 
 function BookCard({ book }) {
@@ -7,28 +7,89 @@ function BookCard({ book }) {
   const [editIndex, setEditIndex] = useState(-1);
   const [editReview, setEditReview] = useState('');
 
-  // Handle adding a new review
-  const addReview = () => {
+  useEffect(() => {
+    fetchReviews();
+  }, []);
+
+  const fetchReviews = async () => {
+    try {
+      const response = await fetch(`http://localhost:5555/review/book/${book.id}`);
+      const data = await response.json();
+      setReviews(data);
+    } catch (error) {
+      console.error('Error fetching reviews:', error);
+    }
+  };
+
+  const addReview = async () => {
     if (newReview.trim()) {
-      setReviews([...reviews, newReview]);
-      setNewReview('');
+      try {
+        const token = localStorage.getItem('jwt_token');
+        const response = await fetch('http://localhost:5555/review', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            content: newReview,
+            rating: 5, // Assuming a default rating, you can change this
+            book_id: book.id
+          })
+        });
+
+        const data = await response.json();
+        setReviews([...reviews, data]);
+        setNewReview('');
+      } catch (error) {
+        console.error('Error adding review:', error);
+      }
     }
   };
 
-  // Handle editing an existing review
-  const updateReview = () => {
+  const updateReview = async () => {
     if (editReview.trim()) {
-      const updatedReviews = [...reviews];
-      updatedReviews[editIndex] = editReview;
-      setReviews(updatedReviews);
-      setEditIndex(-1);
-      setEditReview('');
+      try {
+        const token = localStorage.getItem('jwt_token');
+        const response = await fetch(`http://localhost:5555/review/${reviews[editIndex].id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            content: editReview,
+            rating: 5, // Assuming a default rating, you can change this
+            book_id: book.id
+          })
+        });
+
+        const data = await response.json();
+        const updatedReviews = [...reviews];
+        updatedReviews[editIndex] = data;
+        setReviews(updatedReviews);
+        setEditIndex(-1);
+        setEditReview('');
+      } catch (error) {
+        console.error('Error updating review:', error);
+      }
     }
   };
 
-  // Handle deleting a review
-  const deleteReview = (index) => {
-    setReviews(reviews.filter((_, i) => i !== index));
+  const deleteReview = async (index) => {
+    try {
+      const token = localStorage.getItem('jwt_token');
+      await fetch(`http://localhost:5555/review/${reviews[index].id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      setReviews(reviews.filter((_, i) => i !== index));
+    } catch (error) {
+      console.error('Error deleting review:', error);
+    }
   };
 
   return (
@@ -38,7 +99,6 @@ function BookCard({ book }) {
         alt={book.title}
         className="book-image"
       />
-      {/* Add an image */}
       <h3>{book.title}</h3>
       <p>
         <strong>Author:</strong> {book.author}
@@ -67,8 +127,8 @@ function BookCard({ book }) {
                   </div>
                 ) : (
                   <div>
-                    <span>{review}</span>
-                    <button onClick={() => setEditIndex(index) & setEditReview(review)}>Edit</button>
+                    <span>{review.content}</span>
+                    <button onClick={() => setEditIndex(index) & setEditReview(review.content)}>Edit</button>
                     <button onClick={() => deleteReview(index)}>Delete</button>
                   </div>
                 )}
@@ -85,7 +145,7 @@ function BookCard({ book }) {
             value={newReview}
             onChange={(e) => setNewReview(e.target.value)}
           />
-          <button onClick={addReview}>Add Review</button>
+          <button className='addReview' onClick={addReview}>Add Review</button>
         </div>
       </div>
     </div>
@@ -93,4 +153,3 @@ function BookCard({ book }) {
 }
 
 export default BookCard;
-
