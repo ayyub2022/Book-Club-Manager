@@ -30,7 +30,7 @@ function Login() {
       } else if (data.access_token) {
         localStorage.setItem("jwt_token", data.access_token);
         localStorage.setItem("jwt_refresh_token", data.refresh_token);
-        navigate("/discoveries"); // Corrected spelling
+        navigate("/"); // Corrected spelling
       }
     } catch (error) {
       setError(error.message);
