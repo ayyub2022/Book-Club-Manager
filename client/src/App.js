@@ -9,6 +9,7 @@ import UserProfile from './components/UserProfile';
 import Dashboard from './components/Dashboard';
 import ReadingPlanner from './components/ReadingPlanner';
 import Discoveries from './components/Discoveries';
+import Register from './components/Register'
 
 
 function App() {
@@ -16,12 +17,13 @@ function App() {
 
   return (
     <Router>
-      <Navbar /> {/* Render Navbar on all pages */}
+      <Navbar /> 
       <Routes>
         <Route path="/discoveries" component={Discoveries} /> 
         <Route path="/reading-planner" element={<ReadingPlanner />} /> 
-        <Route path="/" element={<Home />} /> {/* Home component as landing page */}
+        <Route path="/" element={<Home />} /> 
         <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
         <Route path="/dashboard" element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" />} />
         <Route path="/profile" element={isAuthenticated ? <UserProfile /> : <Navigate to="/login" />} />
         <Route path="*" element={<Navigate to="/" />} />
