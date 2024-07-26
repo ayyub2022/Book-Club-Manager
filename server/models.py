@@ -101,7 +101,7 @@ class Book(db.Model, SerializerMixin):
                 else None
             ),
             "is_removable": self.is_removable , # Include the new field in the dict representation
-            "image_url":f"{self.cover_image_url}"
+            "image":f"{self.cover_image_url}"
         }
 
 
