@@ -11,24 +11,24 @@ import Login from "./components/Login";
 import UserProfile from "./components/UserProfile";
 //import Dashboard from './components/Dashboard';
 import ReadingPlanner from "./components/ReadingPlanner";
-import Discoveries from "./components/Discoveries";
 import Register from "./components/Register";
-import UserReviews from "./components/Reviews";
+import UserReviews from "./components/ReviewList";
+import BookDetails from "./components/BookDetails";
 
 function App() {
-  const isAuthenticated = Boolean(localStorage.getItem("jwt_token")); // Replace with actual auth check
-
+  
+  
   return (
     <Router>
       <Navbar />
       <Routes>
-        <Route path="/discoveries" component={Discoveries} />
         <Route path="/reading-planner" element={<ReadingPlanner />} />
         <Route index path="/home" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/profile" element={<UserProfile />} />
         <Route path="/reviews" element={<UserReviews />} />
+        <Route path="/book/:bookId" element={<BookDetails />} /> 
         <Route path="*" element={<Navigate to="/home" />} />
       </Routes>
     </Router>
