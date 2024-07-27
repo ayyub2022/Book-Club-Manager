@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import ReviewList from "./ReviewList"; // Import your ReviewList component
 import "./BookDetails.css"; // Import your CSS file for styling
 
@@ -11,8 +11,9 @@ function BookDetails() {
   const [editReviewId, setEditReviewId] = useState(null);
   const [editReviewContent, setEditReviewContent] = useState("");
   const [error, setError] = useState("");
+  const isAuthenticated = Boolean(localStorage.getItem("jwt_token")); // Replace with actual auth check
 
-
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchBookDetails = async () => {
       try {
@@ -59,13 +60,13 @@ function BookDetails() {
             }),
           }
         );
-  
+
         if (!response.ok) {
           throw new Error("Failed to add review");
         }
-  
+
         const newReviewData = await response.json();
-  
+
         setReviews((prev) => [
           ...prev,
           {
@@ -80,7 +81,7 @@ function BookDetails() {
       }
     }
   };
-  
+
   const editReview = async () => {
     if (editReviewContent.trim()) {
       try {
@@ -96,13 +97,13 @@ function BookDetails() {
             body: JSON.stringify({ content: editReviewContent }),
           }
         );
-  
+
         if (!response.ok) {
           throw new Error("Failed to update review");
         }
-  
+
         const updatedReview = await response.json();
-  
+
         setReviews((prevReviews) =>
           prevReviews.map((review) =>
             review.id === updatedReview.id ? updatedReview : review
@@ -115,7 +116,6 @@ function BookDetails() {
       }
     }
   };
-  
 
   const deleteReview = async (reviewId) => {
     try {
@@ -173,14 +173,18 @@ function BookDetails() {
       />
 
       <div className="review-form">
-      {error && <div className="error-message">{error}</div>}
+        {/* {error && <div className="error-message">{error}</div>} */}
         <input
           type="text"
           placeholder="Add a review..."
           value={newReview}
           onChange={(e) => setNewReview(e.target.value)}
         />
-        <button onClick={addReview}>Add Review</button>
+        {isAuthenticated ? (
+          <button onClick={addReview}>Add Review</button>
+        ) : (
+          <button onClick={() => navigate("/login")}>Add Review</button>
+        )}
       </div>
 
       {editReviewId && (

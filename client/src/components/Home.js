@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import "./Home.css"; // Ensure you have this CSS file for general styling
+import { useNavigate } from "react-router-dom";
 
 const BookCard = ({ book, addToFavorites }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <div
@@ -44,7 +46,18 @@ const BookCard = ({ book, addToFavorites }) => {
           </p>
         </div>
       )}
-      <button onClick={() => addToFavorites(book.id)}>Add to Favorites</button>
+      <button
+        className="favorite-button"
+        onClick={() => addToFavorites(book.id)}
+      >
+        Add to Favorites
+      </button>
+      <button
+        className="detail-button"
+        onClick={() => navigate(`/book/${book.id}`)}
+      >
+        View more detail
+      </button>
     </div>
   );
 };

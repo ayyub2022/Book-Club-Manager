@@ -32,7 +32,7 @@ function Navbar() {
               <Link to="/reading-planner">Reading Planner</Link>
             </li>
             <li>
-              <button onClick={handleLogout}>Logout</button>
+              <Link className="logout" to={"/home"} onClick={handleLogout}>Logout</Link>
             </li>
           </>
         ) : (

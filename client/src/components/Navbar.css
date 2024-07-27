@@ -59,6 +59,11 @@ body {
   padding: 5px 10px;
   border-radius: 5px;
 }
+ 
+a.logout{
+  background-color: #124c86;
+}
+
 
 .navbar-links a:hover {
   color: #32c8cd; /* Green color on hover */
