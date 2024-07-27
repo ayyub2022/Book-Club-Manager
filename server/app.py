@@ -355,7 +355,9 @@ class FavoriteResource(Resource):
         if book not in user.favorite_books:
             return {"error": "Book not in favorites"}, 400
 
-        user_book = UserBook.query.filter_by(user_id=current_user_id, book_id=book_id).first()
+        user_book = UserBook.query.filter_by(
+            user_id=current_user_id, book_id=book_id
+        ).first()
         if user_book:
             db.session.delete(user_book)
             db.session.commit()
@@ -365,6 +367,56 @@ class FavoriteResource(Resource):
 
 
 api.add_resource(FavoriteResource, "/user/favorites")
+
+
+class BookDetails(Resource):
+    def get(self, book_id):
+        book = Book.query.get(book_id)
+        if not book:
+            return jsonify({"error": "Book not found"}), 404
+
+        reviews = Review.query.filter_by(book_id=book_id).all()
+        reviews_list = [
+            review.to_dict() for review in reviews
+        ]  # Ensure `to_dict` method in Review model
+
+        return (
+            jsonify(
+                {
+                    "book": book.to_dict(),  # Ensure `to_dict` method in Book model
+                    "reviews": reviews_list,
+                }
+            ),
+            200,
+        )
+
+    @jwt_required()
+    def post(self, book_id):
+        data = request.get_json()
+        current_user_id = get_jwt_identity()
+        user = User.query.get(current_user_id)
+
+        if user is None:
+            return jsonify({"error": "User not found"}), 404
+
+        book = Book.query.get(book_id)
+        if not book:
+            return jsonify({"error": "Book not found"}), 404
+
+        review = Review(
+            content=data["content"],
+            rating=data["rating"],
+            book_id=book_id,
+            user_id=current_user_id,
+        )
+
+        db.session.add(review)
+        db.session.commit()
+
+        return jsonify(review.to_dict()), 201
+
+
+api.add_resource(BookDetails, "/book_detail/<int:book_id>")
 
 
 if __name__ == "__main__":
